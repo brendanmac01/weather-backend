@@ -26,7 +26,6 @@ mongoose.connection
 ////////////////////////////////
 const weatherSchema = new mongoose.Schema({
   zip: String,
-  temperature: String,
   uid: String,
 })
 
@@ -83,7 +82,7 @@ app.post("/weather", isAuthenticated, async (req, res) => {
   }
 });
 
-app.delete("/weather/:id", async (req, res) => {
+app.delete("/weather/:id", isAuthenticated, async (req, res) => {
   try {
     res.json(await Weather.findByIdAndRemove(req.params.id));
   } catch (error) {
@@ -91,7 +90,7 @@ app.delete("/weather/:id", async (req, res) => {
   }
 });
 
-app.put("/weather/:id", async (req, res) => {
+app.put("/weather/:id", isAuthenticated, async (req, res) => {
   try {
     res.json(
       await Weather.findByIdAndUpdate(req.params.id, req.body, {
