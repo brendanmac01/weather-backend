@@ -76,13 +76,21 @@ app.get("/weather", isAuthenticated, async (req, res) => {
 
 app.post("/weather", isAuthenticated, async (req, res) => {
   try {
-    res.json(await Weather.create(req.body));
+    const weatherData = new Weather({
+      zip: req.body.zip,
+      uid: req.user.uid,
+    });
+
+    const weather = await weatherData.save();
+
+    res.status(201).json(weather);
   } catch (error) {
-    res.status(400).json(error)
+    res.status(400).json(error);
   }
 });
 
-app.delete("/weather/:id", isAuthenticated, async (req, res) => {
+
+app.delete("/weather/:id", async (req, res) => {
   try {
     res.json(await Weather.findByIdAndRemove(req.params.id));
   } catch (error) {
@@ -90,7 +98,7 @@ app.delete("/weather/:id", isAuthenticated, async (req, res) => {
   }
 });
 
-app.put("/weather/:id", isAuthenticated, async (req, res) => {
+app.put("/weather/:id", async (req, res) => {
   try {
     res.json(
       await Weather.findByIdAndUpdate(req.params.id, req.body, {
